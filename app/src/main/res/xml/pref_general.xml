@@ -1,11 +1,11 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <ListPreference
-            android:defaultValue="1"
+            android:defaultValue="New Zealand"
             android:title="Country" android:entries="@array/countries" android:entryValues="@array/countries"
             android:key="country_preference"/>
     <ListPreference
-            android:defaultValue="1"
+            android:defaultValue="Auckland"
             android:title="City" android:entries="@array/cities" android:entryValues="@array/cities"
             android:key="city_preference"/>
     <SwitchPreference

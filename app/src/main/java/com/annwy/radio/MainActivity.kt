@@ -41,9 +41,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun setTitleToCurrentCity() {
+        if (!PreferenceManager.getDefaultSharedPreferences(applicationContext).contains("city_preference")) {
+            PreferenceManager.setDefaultValues(applicationContext, R.xml.pref_general, false)
+        }
         currentCity = PreferenceManager
             .getDefaultSharedPreferences(applicationContext)
-            .getString("city_preference", "")
+            .getString("city_preference", String())
         title = currentCity
     }
 
