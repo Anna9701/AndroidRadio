@@ -12,11 +12,10 @@ import com.annwy.radio.radioStations.RadioStationsContent.RadioStation
 
 import kotlinx.android.synthetic.main.fragment_radiostation.view.*
 
-class MyRadioStationRecyclerViewAdapter(
-    private val mValues: List<RadioStation>,
-    private val mListener: OnListFragmentInteractionListener?
-) : RecyclerView.Adapter<MyRadioStationRecyclerViewAdapter.ViewHolder>() {
-
+class MyRadioStationRecyclerViewAdapter(private val mValues: List<RadioStation>,
+                                        private val mListener: OnListFragmentInteractionListener?)
+    : RecyclerView.Adapter<MyRadioStationRecyclerViewAdapter.ViewHolder>() {
+    private var stationIndex = 0
     private val mOnClickListener: View.OnClickListener
 
     init {
@@ -34,7 +33,7 @@ class MyRadioStationRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = mValues[position]
-        holder.mIdView.text = item.id
+        holder.mIdView.text = (++stationIndex).toString()
         holder.mContentView.text = item.radioName
 
         with(holder.mView) {

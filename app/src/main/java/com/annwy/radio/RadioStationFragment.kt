@@ -26,10 +26,8 @@ class RadioStationFragment : Fragment() {
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_radiostation_list, container, false)
 
         // Set the adapter
@@ -39,7 +37,7 @@ class RadioStationFragment : Fragment() {
                     columnCount <= 1 -> LinearLayoutManager(context)
                     else -> GridLayoutManager(context, columnCount)
                 }
-                adapter = MyRadioStationRecyclerViewAdapter(RadioStationsContent.ITEMS, listener)
+                adapter = MyRadioStationRecyclerViewAdapter(RadioStationsContent(activity?.resources).items, listener)
             }
         }
         return view

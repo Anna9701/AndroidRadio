@@ -9,6 +9,7 @@
                 android:icon="@drawable/ic_menu_slideshow"
                 android:title="Stations list"/>
         <item
+                android:enabled="false"
                 android:id="@+id/nav_manage_stations"
                 android:icon="@drawable/ic_menu_manage"
                 android:title="Edit stations"/>
