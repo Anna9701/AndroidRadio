@@ -10,13 +10,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 
-import com.annwy.radio.dummy.DummyContent
-import com.annwy.radio.dummy.DummyContent.DummyItem
+import com.annwy.radio.radioStations.RadioStationsContent
+import com.annwy.radio.radioStations.RadioStationsContent.RadioStation
 
 
 class RadioStationFragment : Fragment() {
     private var columnCount = 1
-
     private var listener: OnListFragmentInteractionListener? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,7 +39,7 @@ class RadioStationFragment : Fragment() {
                     columnCount <= 1 -> LinearLayoutManager(context)
                     else -> GridLayoutManager(context, columnCount)
                 }
-                adapter = MyRadioStationRecyclerViewAdapter(DummyContent.ITEMS, listener)
+                adapter = MyRadioStationRecyclerViewAdapter(RadioStationsContent.ITEMS, listener)
             }
         }
         return view
@@ -59,7 +58,7 @@ class RadioStationFragment : Fragment() {
     }
 
     interface OnListFragmentInteractionListener {
-        fun onListFragmentInteraction(item: DummyItem?)
+        fun onListFragmentInteraction(item: RadioStation?)
     }
 
     companion object {

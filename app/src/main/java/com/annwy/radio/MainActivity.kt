@@ -8,13 +8,15 @@ import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import com.annwy.radio.R
+import com.annwy.radio.radioStations.RadioStationsContent
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
-    private val radioUrl = "https://livestream.mediaworks.nz/radio_origin/breeze_128kbps/chunklist.m3u8"
-    private val radioLabel = "The Breeze - Auckland"
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, RadioStationFragment.OnListFragmentInteractionListener {
+    override fun onListFragmentInteraction(item: RadioStationsContent.RadioStation?) {
+        openRadioPlayerFragment(item!!.radioUrl, item.radioName)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,7 +30,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         toggle.syncState()
 
         nav_view.setNavigationItemSelectedListener(this)
-        openRadioPlayerFragment(radioUrl, radioLabel)
+        openRadioStationsListFragment()
     }
 
     override fun onBackPressed() {
@@ -58,23 +60,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
         when (item.itemId) {
-            R.id.nav_camera -> {
-                // Handle the camera action
-            }
-            R.id.nav_gallery -> {
-
-            }
-            R.id.nav_slideshow -> {
-
-            }
-            R.id.nav_manage -> {
-
-            }
-            R.id.nav_share -> {
-
-            }
-            R.id.nav_send -> {
-
+            R.id.nav_stations -> {
+                openRadioStationsListFragment()
             }
         }
 
@@ -89,6 +76,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         bundle.putString(RadioPlayer.RADIO_STATION_LABEL, radioLabel)
         val radioPlayerFragment = RadioPlayer.newInstance(bundle)
         fragmentTransaction.replace(R.id.main_content, radioPlayerFragment)
+        fragmentTransaction.commit()
+    }
+
+    private fun openRadioStationsListFragment() {
+        val fragmentTransaction = supportFragmentManager.beginTransaction()
+        val radioStationsFragment = RadioStationFragment()
+        fragmentTransaction.replace(R.id.main_content, radioStationsFragment)
         fragmentTransaction.commit()
     }
 }

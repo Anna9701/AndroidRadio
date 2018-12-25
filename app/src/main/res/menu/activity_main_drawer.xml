@@ -3,26 +3,18 @@
       xmlns:tools="http://schemas.android.com/tools"
       tools:showIn="navigation_view">
 
-    <group android:checkableBehavior="single">
+    <group android:checkableBehavior="none">
         <item
-                android:id="@+id/nav_camera"
-                android:icon="@drawable/ic_menu_camera"
-                android:title="Import"/>
-        <item
-                android:id="@+id/nav_gallery"
-                android:icon="@drawable/ic_menu_gallery"
-                android:title="Gallery"/>
-        <item
-                android:id="@+id/nav_slideshow"
+                android:id="@+id/nav_stations"
                 android:icon="@drawable/ic_menu_slideshow"
-                android:title="Slideshow"/>
+                android:title="Stations list"/>
         <item
-                android:id="@+id/nav_manage"
+                android:id="@+id/nav_manage_stations"
                 android:icon="@drawable/ic_menu_manage"
-                android:title="Tools"/>
+                android:title="Edit stations"/>
     </group>
 
-    <item android:title="Communicate">
+    <item android:title="Communicate" android:visible="false">
         <menu>
             <item
                     android:id="@+id/nav_share"

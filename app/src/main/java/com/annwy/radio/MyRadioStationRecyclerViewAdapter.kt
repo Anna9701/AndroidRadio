@@ -5,21 +5,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import com.annwy.radio.R
 
 
 import com.annwy.radio.RadioStationFragment.OnListFragmentInteractionListener
-import com.annwy.radio.dummy.DummyContent.DummyItem
+import com.annwy.radio.radioStations.RadioStationsContent.RadioStation
 
 import kotlinx.android.synthetic.main.fragment_radiostation.view.*
 
-/**
- * [RecyclerView.Adapter] that can display a [DummyItem] and makes a call to the
- * specified [OnListFragmentInteractionListener].
- * TODO: Replace the implementation with code for your data type.
- */
 class MyRadioStationRecyclerViewAdapter(
-    private val mValues: List<DummyItem>,
+    private val mValues: List<RadioStation>,
     private val mListener: OnListFragmentInteractionListener?
 ) : RecyclerView.Adapter<MyRadioStationRecyclerViewAdapter.ViewHolder>() {
 
@@ -27,9 +21,7 @@ class MyRadioStationRecyclerViewAdapter(
 
     init {
         mOnClickListener = View.OnClickListener { v ->
-            val item = v.tag as DummyItem
-            // Notify the active callbacks interface (the activity, if the fragment is attached to
-            // one) that an item has been selected.
+            val item = v.tag as RadioStation
             mListener?.onListFragmentInteraction(item)
         }
     }
@@ -43,7 +35,7 @@ class MyRadioStationRecyclerViewAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = mValues[position]
         holder.mIdView.text = item.id
-        holder.mContentView.text = item.content
+        holder.mContentView.text = item.radioName
 
         with(holder.mView) {
             tag = item
