@@ -56,7 +56,7 @@ class MediaPlayerService : Service(), MediaPlayer.OnPreparedListener, MediaPlaye
             ACTION_PAUSE -> pauseRadio()
             ACTION_STOP -> stopRadio()
         }
-        return super.onStartCommand(intent, flags, startId)
+        return START_STICKY
     }
 
     /** Called when MediaPlayer is ready */
