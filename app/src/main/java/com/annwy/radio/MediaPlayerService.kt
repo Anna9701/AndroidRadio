@@ -1,4 +1,4 @@
-package com.radio.annwy.radio
+package com.annwy.radio
 
 import android.app.Service
 import android.content.Context
@@ -12,19 +12,14 @@ import android.os.PowerManager
 import android.util.Log
 import java.io.IOException
 
-
-const val ACTION_PLAY: String = "com.example.action.PLAY"
-const val ACTION_PAUSE: String = "com.example.action.PAUSE"
-const val ACTION_STOP: String = "com.example.action.STOP"
-
-class MediaPlayerService: Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener {
+class MediaPlayerService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener {
     override fun onError(p0: MediaPlayer?, p1: Int, p2: Int): Boolean {
         Log.e("MediaPlayerServiceError", "Something went wrong. Resetting...")
         mMediaPlayer.reset()
         return true
     }
 
-    private val iBinder = LocalBinder()
+    private val iBinder = Binder()
     private var mMediaPlayer = MediaPlayer()
     private lateinit var wifiLock: WifiManager.WifiLock
 
@@ -53,10 +48,10 @@ class MediaPlayerService: Service(), MediaPlayer.OnPreparedListener, MediaPlayer
         wifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL, "radioLock")
     }
 
-        override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
+    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
 
         val action: String = intent.action
-        when(action) {
+        when (action) {
             ACTION_PLAY -> startPlayer(intent.extras["radioUrl"].toString())
             ACTION_PAUSE -> pauseRadio()
             ACTION_STOP -> stopRadio()
@@ -69,17 +64,17 @@ class MediaPlayerService: Service(), MediaPlayer.OnPreparedListener, MediaPlayer
         mMediaPlayer.start()
     }
 
-    fun startPlayer(url: String) {
+    private fun startPlayer(url: String) {
         initMediaPlayer(url)
         wifiLock.acquire()
     }
 
-    fun pauseRadio() {
+    private fun pauseRadio() {
         mMediaPlayer.pause()
         wifiLock.release()
     }
 
-    fun stopRadio() {
+    private fun stopRadio() {
         mMediaPlayer.stop()
         wifiLock.release()
     }
@@ -89,8 +84,9 @@ class MediaPlayerService: Service(), MediaPlayer.OnPreparedListener, MediaPlayer
         mMediaPlayer.release()
     }
 
-    inner class LocalBinder : Binder() {
-        val service: MediaPlayerService
-            get() = this@MediaPlayerService
+    companion object {
+        const val ACTION_PLAY: String = "com.example.action.PLAY"
+        const val ACTION_PAUSE: String = "com.example.action.PAUSE"
+        const val ACTION_STOP: String = "com.example.action.STOP"
     }
 }
