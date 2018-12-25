@@ -1,19 +1,25 @@
 package com.annwy.radio
 
+import android.content.Intent
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import com.annwy.radio.R
+import com.annwy.radio.R.id.action_settings
 import com.annwy.radio.radioStations.RadioStationsContent
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, RadioStationFragment.OnListFragmentInteractionListener {
+    private lateinit var currentCity: String
+
     override fun onListFragmentInteraction(item: RadioStationsContent.RadioStation?) {
         openRadioPlayerFragment(item!!.radioUrl, item.radioName)
     }
@@ -22,6 +28,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
+        setTitleToCurrentCity()
 
         val toggle = ActionBarDrawerToggle(
             this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close
@@ -31,6 +38,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         nav_view.setNavigationItemSelectedListener(this)
         openRadioStationsListFragment()
+    }
+
+    private fun setTitleToCurrentCity() {
+        currentCity = PreferenceManager
+            .getDefaultSharedPreferences(applicationContext)
+            .getString("city_preference", "")
+        title = currentCity
     }
 
     override fun onBackPressed() {
@@ -44,6 +58,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.main, menu)
+        menu.findItem(R.id.action_settings).setOnMenuItemClickListener {
+            startActivity(Intent(applicationContext, SettingsActivity::class.java))
+            true
+        }
         return true
     }
 
@@ -70,7 +88,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun openRadioPlayerFragment(radioUrl: String, radioLabel: String) {
-        val fragmentTransaction = supportFragmentManager.beginTransaction()
+        val fragmentTransaction = supportFragmentManager.beginTransaction().addToBackStack(null)
         val bundle = Bundle()
         bundle.putString(RadioPlayer.RADIO_STATION_URL, radioUrl)
         bundle.putString(RadioPlayer.RADIO_STATION_LABEL, radioLabel)
@@ -81,7 +99,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun openRadioStationsListFragment() {
         val fragmentTransaction = supportFragmentManager.beginTransaction()
-        val radioStationsFragment = RadioStationFragment()
+        val radioStationsFragment = RadioStationFragment.newInstance(currentCity)
         fragmentTransaction.replace(R.id.main_content, radioStationsFragment)
         fragmentTransaction.commit()
     }

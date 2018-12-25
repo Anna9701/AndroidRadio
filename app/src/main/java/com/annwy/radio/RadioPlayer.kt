@@ -26,6 +26,7 @@ class RadioPlayer : Fragment() {
     private lateinit var radioUrl: String
     private lateinit var radioLabel: String
     private var scheduledStopServiceIntent: PendingIntent? = null
+    private var isPlaying = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,17 +87,20 @@ class RadioPlayer : Fragment() {
     }
 
     private fun playMedia() {
-        val playerIntent = Intent(context, MediaPlayerService::class.java)
-        playerIntent.putExtra("radioUrl", radioUrl)
-        playerIntent.action = MediaPlayerService.ACTION_PLAY
-        context?.startService(playerIntent)
+        if (isPlaying) pauseMedia()
+        val playerServiceIntent = Intent(activity, MediaPlayerService::class.java)
+        playerServiceIntent.putExtra("radioUrl", radioUrl)
+        playerServiceIntent.action = MediaPlayerService.ACTION_PLAY
+        activity?.startService(playerServiceIntent)
+        isPlaying = true
     }
 
     private fun pauseMedia() {
-        val playerIntent = Intent(context, MediaPlayerService::class.java)
+        val playerIntent = Intent(activity, MediaPlayerService::class.java)
         playerIntent.action = MediaPlayerService.ACTION_STOP
-        context?.startService(playerIntent)
+        activity?.startService(playerIntent)
         cancelScheduledStopService(false)
+        isPlaying = false
     }
 
     private fun cancelScheduledStopService(displayPrompt: Boolean = true) {

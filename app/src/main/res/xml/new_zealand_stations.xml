@@ -1,11 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
 <stations>
     <radioStation>
-        <name>The Breeze - Auckland</name>
+        <name>The Breeze</name>
+        <region>Auckland</region>
         <url>https://livestream.mediaworks.nz/radio_origin/breeze_128kbps/chunklist.m3u8</url>
     </radioStation>
     <radioStation>
-        <name>Sound FM Auckland</name>
+        <name>Sound FM</name>
+        <region>Auckland</region>
         <url>https://livestream.mediaworks.nz/radio_origin/sound_128kbps/chunklist.m3u8</url>
+    </radioStation>
+    <radioStation>
+        <name>The Rock FM</name>
+        <region>Auckland</region>
+        <url>https://livestream.mediaworks.nz/radio_origin/rock_128kbps/chunklist.m3u8</url>
+    </radioStation>
+    <radioStation>
+        <name>95bFM</name>
+        <url>http://streams.95bfm.com/stream256</url>
+    </radioStation>
+    <radioStation>
+        <name>The Edge</name>
+        <url>http://livestream.mediaworks.nz/radio_origin/edge_128kbps/chunklist.m3u8</url>
+    </radioStation>
+    <radioStation>
+        <name>MoreFM</name>
+        <region>Auckland</region>
+        <url>https://livestream.mediaworks.nz/radio_origin/more_128kbps/playlist.m3u8</url>
+    </radioStation>
+    <radioStation>
+        <name>Mai FM</name>
+        <region>Auckland</region>
+        <url>https://livestream.mediaworks.nz/radio_origin/maifm_128kbps/chunklist.m3u8</url>
+    </radioStation>
+    <radioStation>
+        <name>George FM</name>
+        <region>Auckland</region>
+        <url>https://livestream.mediaworks.nz/radio_origin/george_128kbps/playlist.m3u8</url>
+    </radioStation>
+    <radioStation>
+        <name>Magic Music</name>
+        <region>Auckland</region>
+        <url>https://livestream.mediaworks.nz/radio_origin/magic_128kbps/playlist.m3u8</url>
+    </radioStation>
+    <radioStation>
+        <name>Radio Live</name>
+        <region>Auckland</region>
+        <url>https://livestream.mediaworks.nz/radio_origin/radiolive_128kbps/playlist.m3u8</url>
+    </radioStation>
+    <radioStation>
+        <name>The Breeze</name>
+        <region>Queenstown</region>
+        <url>https://livestream.mediaworks.nz/radio_origin/breeze_[QTN]_128kbps/chunklist.m3u8</url>
     </radioStation>
 </stations>

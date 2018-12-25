@@ -15,14 +15,15 @@ import com.annwy.radio.radioStations.RadioStationsContent.RadioStation
 
 
 class RadioStationFragment : Fragment() {
-    private var columnCount = 1
     private var listener: OnListFragmentInteractionListener? = null
+    private var regionName = String()
+    private var columnCount = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         arguments?.let {
-            columnCount = it.getInt(ARG_COLUMN_COUNT)
+            regionName = it.getString(RADIO_STATION_REGION)
         }
     }
 
@@ -37,7 +38,7 @@ class RadioStationFragment : Fragment() {
                     columnCount <= 1 -> LinearLayoutManager(context)
                     else -> GridLayoutManager(context, columnCount)
                 }
-                adapter = MyRadioStationRecyclerViewAdapter(RadioStationsContent(activity?.resources).items, listener)
+                adapter = MyRadioStationRecyclerViewAdapter(RadioStationsContent(activity?.resources, regionName).items, listener)
             }
         }
         return view
@@ -60,13 +61,13 @@ class RadioStationFragment : Fragment() {
     }
 
     companion object {
-        const val ARG_COLUMN_COUNT = "column-count"
+        const val RADIO_STATION_REGION = "com.radio.annwy.radio.station_region"
 
         @JvmStatic
-        fun newInstance(columnCount: Int) =
+        fun newInstance(regionName: String) =
             RadioStationFragment().apply {
                 arguments = Bundle().apply {
-                    putInt(ARG_COLUMN_COUNT, columnCount)
+                    putString(RADIO_STATION_REGION, regionName)
                 }
             }
     }

@@ -7,7 +7,7 @@ import org.xmlpull.v1.XmlPullParserException
 import java.io.IOException
 import java.util.ArrayList
 
-class RadioStationsContent(private val resources: Resources?) {
+class RadioStationsContent(private val resources: Resources?, private val regionName: String) {
     val items: MutableList<RadioStation> = ArrayList()
     private val namespace: String? = null
 
@@ -19,7 +19,9 @@ class RadioStationsContent(private val resources: Resources?) {
         val xml = resources?.getXml(R.xml.new_zealand_stations)
         val stations = readStations(xml!!)
         for (station in stations) {
-            items.add(station)
+            if (station.regionName.isEmpty() || station.regionName.equals(regionName, ignoreCase = true)) {
+                items.add(station)
+            }
         }
     }
 
@@ -47,17 +49,19 @@ class RadioStationsContent(private val resources: Resources?) {
         parser.require(XmlResourceParser.START_TAG, namespace, "radioStation")
         var name = String()
         var url = String()
+        var region = String()
         while (parser.next() != XmlResourceParser.END_TAG) {
             if (parser.eventType != XmlResourceParser.START_TAG) {
                 continue
             }
             when (parser.name) {
                 "name" -> name = readTag(parser, "name")
+                "region" -> region = readTag(parser, "region")
                 "url" -> url = readTag(parser, "url")
                 else -> skip(parser)
             }
         }
-        return RadioStation(name, url)
+        return RadioStation(name, url, region)
     }
 
     @Throws(IOException::class, XmlPullParserException::class)
@@ -87,18 +91,13 @@ class RadioStationsContent(private val resources: Resources?) {
         var depth = 1
         while (depth != 0) {
             when (parser.next()) {
-                XmlResourceParser.END_TAG -> depth--
-                XmlResourceParser.START_TAG -> depth++
+                XmlResourceParser.END_TAG -> --depth
+                XmlResourceParser.START_TAG -> ++depth
             }
         }
     }
 
-    data class RadioStation(val radioName: String, val radioUrl: String) {
-        override fun toString(): String = radioName
-    }
-
-    companion object {
-        private const val radioUrl = "https://livestream.mediaworks.nz/radio_origin/breeze_128kbps/chunklist.m3u8"
-        private const val radioLabel = "The Breeze - Auckland"
+    data class RadioStation(val radioName: String, val radioUrl: String, val regionName: String) {
+        override fun toString(): String = "$radioName - $regionName"
     }
 }
