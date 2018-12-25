@@ -2,8 +2,11 @@ package com.annwy.radio
 
 import android.app.AlarmManager
 import android.app.PendingIntent
+import android.app.VoiceInteractor
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.text.Editable
@@ -13,6 +16,9 @@ import android.view.ViewGroup
 import com.annwy.radio.Utils.TimePickerFragment
 import kotlinx.android.synthetic.main.fragment_radio_player.*
 import java.util.*
+import android.graphics.drawable.Drawable
+import android.support.design.widget.Snackbar
+import android.widget.ImageButton
 
 class RadioPlayer : Fragment() {
     private var listener: OnFragmentInteractionListener? = null
@@ -30,39 +36,52 @@ class RadioPlayer : Fragment() {
         alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_radio_player, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        play_button.setOnClickListener { playMedia(); changeEnabledButton() }
-        pause_button.setOnClickListener { pauseMedia(); changeEnabledButton() }
-        stop_schedule_button.setOnClickListener { onScheduleStopButton() }
-        stop_time.setOnClickListener {
-            TimePickerFragment().setTimeEditText(stop_time).show(activity?.fragmentManager, "timePicker")
-        }
-        cancel_stop_button.setOnClickListener { cancelScheduledStopService() }
+        setEventListeners()
+        disableButtonsOnInitialization()
         radio_label.text = radioLabel
     }
 
+    private fun disableButtonsOnInitialization() {
+        setImageButtonEnabled(context!!, false, pause_button, android.R.drawable.ic_media_pause)
+        setImageButtonEnabled(context!!, false, sleep_button, android.R.drawable.ic_menu_recent_history)
+        setImageButtonEnabled(context!!, false, cancel_sleep_button, android.R.drawable.ic_menu_close_clear_cancel)
+    }
+
+    private fun setEventListeners() {
+        play_button.setOnClickListener { playMedia(); invertEnabled() }
+        pause_button.setOnClickListener { pauseMedia(); invertEnabled() }
+        sleep_button.setOnClickListener { onScheduleStopButton() }
+        stop_time.setOnClickListener {
+            TimePickerFragment().setTimeEditText(stop_time).show(activity?.fragmentManager, "timePicker")
+        }
+        cancel_sleep_button.setOnClickListener { cancelScheduledStopService() }
+    }
+
     private fun onScheduleStopButton() {
+        if (stop_time.text.isNullOrEmpty()) return
         val time = stop_time.text.split(":")
         val hour = time[0].toInt()
         val minutes = time[1].toInt()
         scheduleStopService(context!!, hour, minutes)
-        stop_scheduled_prompt.visibility = View.VISIBLE
-        cancel_stop_button.isEnabled = true
+        displayMessageInSnackBar(String.format(resources.getText(R.string.timer_scheduled_prompt).toString(), stop_time.text))
+        setImageButtonEnabled(context!!, true, cancel_sleep_button, android.R.drawable.ic_menu_close_clear_cancel)
     }
 
-    private fun changeEnabledButton() {
-        play_button.isEnabled = !play_button.isEnabled
-        pause_button.isEnabled = !pause_button.isEnabled
-        stop_schedule_button.isEnabled = !stop_schedule_button.isEnabled
+    private fun displayMessageInSnackBar(msg: String) {
+        Snackbar.make(view!!, msg, Snackbar.LENGTH_LONG).setAction("Action", null).show()
+    }
+
+    private fun invertEnabled() {
+        setImageButtonEnabled(context!!, !play_button.isEnabled, play_button, android.R.drawable.ic_media_play)
+        setImageButtonEnabled(context!!, !pause_button.isEnabled, pause_button, android.R.drawable.ic_media_pause)
+        setImageButtonEnabled(context!!, !sleep_button.isEnabled, sleep_button, android.R.drawable.ic_menu_recent_history)
         stop_time.isEnabled = !stop_time.isEnabled
     }
 
@@ -77,16 +96,18 @@ class RadioPlayer : Fragment() {
         val playerIntent = Intent(context, MediaPlayerService::class.java)
         playerIntent.action = MediaPlayerService.ACTION_STOP
         context?.startService(playerIntent)
-        cancelScheduledStopService()
+        cancelScheduledStopService(false)
     }
 
-    private fun cancelScheduledStopService() {
+    private fun cancelScheduledStopService(displayPrompt: Boolean = true) {
         if (scheduledStopServiceIntent != null) {
             alarmManager.cancel(scheduledStopServiceIntent)
         }
+        if (displayPrompt) {
+            displayMessageInSnackBar(resources.getText(R.string.timer_cancelled_prompt).toString())
+        }
         stop_time.text = String().toEditable()
-        cancel_stop_button.isEnabled = false
-        stop_scheduled_prompt.visibility = View.GONE
+        setImageButtonEnabled(context!!, false, cancel_sleep_button, android.R.drawable.ic_menu_close_clear_cancel)
     }
 
 
@@ -132,6 +153,24 @@ class RadioPlayer : Fragment() {
 
     interface OnFragmentInteractionListener {
         fun onFragmentInteraction()
+    }
+
+    private fun setImageButtonEnabled(context: Context, enabled: Boolean,
+                                      item: ImageButton, iconResId: Int) {
+        item.isEnabled = enabled
+        item.isClickable = enabled
+        val originalIcon = context.resources.getDrawable(iconResId)
+        val icon = if (enabled) originalIcon else convertDrawableToGrayScale(originalIcon)
+        item.setImageDrawable(icon)
+    }
+
+    private fun convertDrawableToGrayScale(drawable: Drawable?): Drawable? {
+        if (drawable == null) {
+            return null
+        }
+        val res = drawable.mutate()
+        res.setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_IN)
+        return res
     }
 
     companion object {

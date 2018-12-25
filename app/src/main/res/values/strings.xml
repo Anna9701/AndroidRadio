@@ -7,6 +7,9 @@
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="timer_hint">Time to fall asleep…</string>
+    <string name="timer_scheduled_prompt">Timer successfully scheduled to %s o\'clock. Good night!</string>
+    <string name="timer_cancelled_prompt">Timer successfully cancelled. Now you can listen endlessly!</string>
+    <string name="sleep_timer_section_header">Sleep timer</string>
+    <string name="radio_label">Radio station</string>
 </resources>
