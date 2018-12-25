@@ -6,16 +6,20 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.annwy.radio.Utils.TimePickerFragment
 import kotlinx.android.synthetic.main.fragment_radio_player.*
 import java.util.*
 
 class RadioPlayer : Fragment() {
     private var listener: OnFragmentInteractionListener? = null
+    private lateinit var alarmManager: AlarmManager
     private lateinit var radioUrl: String
     private lateinit var radioLabel: String
+    private var scheduledStopServiceIntent: PendingIntent? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,11 +27,14 @@ class RadioPlayer : Fragment() {
             radioUrl = it.getString(RADIO_STATION_URL)
             radioLabel = it.getString(RADIO_STATION_LABEL)
         }
+        alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
     }
 
-    override fun onCreateView(inflater: LayoutInflater,
-                              container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_radio_player, container, false)
     }
 
@@ -36,6 +43,10 @@ class RadioPlayer : Fragment() {
         play_button.setOnClickListener { playMedia(); changeEnabledButton() }
         pause_button.setOnClickListener { pauseMedia(); changeEnabledButton() }
         stop_schedule_button.setOnClickListener { onScheduleStopButton() }
+        stop_time.setOnClickListener {
+            TimePickerFragment().setTimeEditText(stop_time).show(activity?.fragmentManager, "timePicker")
+        }
+        cancel_stop_button.setOnClickListener { cancelScheduledStopService() }
         radio_label.text = radioLabel
     }
 
@@ -44,6 +55,8 @@ class RadioPlayer : Fragment() {
         val hour = time[0].toInt()
         val minutes = time[1].toInt()
         scheduleStopService(context!!, hour, minutes)
+        stop_scheduled_prompt.visibility = View.VISIBLE
+        cancel_stop_button.isEnabled = true
     }
 
     private fun changeEnabledButton() {
@@ -64,16 +77,26 @@ class RadioPlayer : Fragment() {
         val playerIntent = Intent(context, MediaPlayerService::class.java)
         playerIntent.action = MediaPlayerService.ACTION_STOP
         context?.startService(playerIntent)
+        cancelScheduledStopService()
     }
 
+    private fun cancelScheduledStopService() {
+        if (scheduledStopServiceIntent != null) {
+            alarmManager.cancel(scheduledStopServiceIntent)
+        }
+        stop_time.text = String().toEditable()
+        cancel_stop_button.isEnabled = false
+        stop_scheduled_prompt.visibility = View.GONE
+    }
+
+
     private fun scheduleStopService(mContext: Context, hour: Int, minute: Int) {
-        val alarmManager = mContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(mContext, MediaPlayerService::class.java)
         intent.action = MediaPlayerService.ACTION_STOP
-        val pendingIntent = PendingIntent.getService(mContext, 0, intent, 0)
+        scheduledStopServiceIntent = PendingIntent.getService(mContext, 0, intent, 0)
 
         // reset previous pending intent
-        alarmManager.cancel(pendingIntent)
+        alarmManager.cancel(scheduledStopServiceIntent)
 
         // Set the alarm to start at approximately 08:00 morning.
         val calendar = Calendar.getInstance()
@@ -90,7 +113,7 @@ class RadioPlayer : Fragment() {
         alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
             calendar.timeInMillis,
-            pendingIntent
+            scheduledStopServiceIntent
         )
     }
 
@@ -119,5 +142,7 @@ class RadioPlayer : Fragment() {
         fun newInstance(bundle: Bundle) = RadioPlayer().apply {
             arguments = Bundle().apply { putAll(bundle) }
         }
+
+        fun String.toEditable(): Editable = Editable.Factory.getInstance().newEditable(this)
     }
 }
