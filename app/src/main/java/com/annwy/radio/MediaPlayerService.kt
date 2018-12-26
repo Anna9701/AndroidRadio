@@ -1,6 +1,8 @@
 package com.annwy.radio
 
 import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
 import android.content.Intent
@@ -8,8 +10,10 @@ import android.media.AudioManager
 import android.media.MediaPlayer
 import android.net.wifi.WifiManager
 import android.os.Binder
+import android.os.Build
 import android.os.IBinder
 import android.os.PowerManager
+import android.support.v4.app.NotificationCompat
 import android.util.Log
 import com.annwy.radio.models.RadioStation
 import org.jetbrains.anko.activityManager
@@ -20,6 +24,23 @@ class MediaPlayerService : Service(), MediaPlayer.OnPreparedListener, MediaPlaye
         Log.e("MediaPlayerServiceError", "Something went wrong. Resetting...")
         mMediaPlayer.reset()
         return true
+    }
+
+    private fun createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = getString(R.string.app_name)
+            val descriptionText = getString(R.string.app_name)
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel(CHANNEL_ID.toString(), name, importance).apply {
+                description = descriptionText
+            }
+            // Register the channel with the system
+            val notificationManager: NotificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
     }
 
     private val iBinder = Binder()
@@ -80,10 +101,12 @@ class MediaPlayerService : Service(), MediaPlayer.OnPreparedListener, MediaPlaye
     }
 
     private fun createNotification(): Notification {
-        val builder = Notification.Builder(applicationContext)
-        builder.setContentTitle("New Zealand Radio Player")
-        builder.setContentText("Now playing: ${radioStation?.radioName}")
-        return builder.build()
+        val mBuilder = NotificationCompat.Builder(this, CHANNEL_ID.toString())
+            .setContentTitle(resources.getString(R.string.app_name))
+            .setContentText("Now playing: ${radioStation?.radioName}")
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+
+        return mBuilder.build()
     }
 
     private fun pauseRadio() {
@@ -107,5 +130,10 @@ class MediaPlayerService : Service(), MediaPlayer.OnPreparedListener, MediaPlaye
         const val ACTION_STOP: String = "com.example.action.STOP"
 
         const val RADIO_STATION_KEY: String = "com.example.keys.RADIO_STATION"
+        private const val CHANNEL_ID = 997
+    }
+
+    init {
+        createNotificationChannel()
     }
 }

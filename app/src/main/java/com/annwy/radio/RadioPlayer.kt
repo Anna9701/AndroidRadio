@@ -26,11 +26,13 @@ class RadioPlayer : Fragment() {
     private lateinit var radioStation: RadioStation
     private var scheduledStopServiceIntent: PendingIntent? = null
     private var isPlaying = false
+    private var currentPlayerServiceIntent: Intent? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             radioStation = it.getParcelable(RADIO_STATION)
+            currentPlayerServiceIntent = it.getParcelable(PLAYER_SERVICE_INTENT)
         }
         alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
     }
@@ -51,6 +53,9 @@ class RadioPlayer : Fragment() {
         setImageButtonEnabled(context!!, false, pause_button, android.R.drawable.ic_media_pause)
         setImageButtonEnabled(context!!, false, sleep_button, android.R.drawable.ic_menu_recent_history)
         setImageButtonEnabled(context!!, false, cancel_sleep_button, android.R.drawable.ic_menu_close_clear_cancel)
+        if (currentPlayerServiceIntent?.extras?.getParcelable<RadioStation>(MediaPlayerService.RADIO_STATION_KEY) == radioStation) {
+            invertEnabled()
+        }
     }
 
     private fun setEventListeners() {
@@ -85,15 +90,18 @@ class RadioPlayer : Fragment() {
     }
 
     private fun playMedia() {
-        if (isPlaying) pauseMedia()
+        pauseMedia()
         val playerServiceIntent = Intent(activity, MediaPlayerService::class.java)
         playerServiceIntent.putExtra(MediaPlayerService.RADIO_STATION_KEY, radioStation)
         playerServiceIntent.action = MediaPlayerService.ACTION_PLAY
         activity?.startService(playerServiceIntent)
         isPlaying = true
+        listener?.onPlayPlayerFragmentInteraction(playerServiceIntent)
     }
 
     private fun pauseMedia() {
+        if (currentPlayerServiceIntent != null) activity?.stopService(currentPlayerServiceIntent)
+        if (!isPlaying) return
         val playerIntent = Intent(activity, MediaPlayerService::class.java)
         playerIntent.action = MediaPlayerService.ACTION_STOP
         activity?.startService(playerIntent)
@@ -154,7 +162,7 @@ class RadioPlayer : Fragment() {
 
 
     interface OnFragmentInteractionListener {
-        fun onFragmentInteraction()
+        fun onPlayPlayerFragmentInteraction(playerIntent: Intent)
     }
 
     private fun setImageButtonEnabled(context: Context, enabled: Boolean,
@@ -177,10 +185,14 @@ class RadioPlayer : Fragment() {
 
     companion object {
         const val RADIO_STATION = "com.radio.annwy.radio.station"
+        const val PLAYER_SERVICE_INTENT = "com.radio.annwy.radio.player_service_intent"
 
         @JvmStatic
-        fun newInstance(radioStation: RadioStation) = RadioPlayer().apply {
-            arguments = Bundle().apply { putParcelable(RADIO_STATION, radioStation) }
+        fun newInstance(radioStation: RadioStation, playerIntent: Intent?) = RadioPlayer().apply {
+            arguments = Bundle().apply {
+                putParcelable(RADIO_STATION, radioStation)
+                putParcelable(PLAYER_SERVICE_INTENT, playerIntent)
+            }
         }
 
         fun String.toEditable(): Editable = Editable.Factory.getInstance().newEditable(this)

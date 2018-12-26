@@ -1,5 +1,6 @@
 package com.annwy.radio
 
+import android.app.PendingIntent
 import android.content.Intent
 import android.os.Bundle
 import android.preference.PreferenceManager
@@ -18,11 +19,17 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, RadioStationFragment.OnListFragmentInteractionListener {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener,
+    RadioStationFragment.OnListFragmentInteractionListener, RadioPlayer.OnFragmentInteractionListener {
     private lateinit var currentCity: String
+    private var currentPlayerServiceIntent: Intent? = null
 
     override fun onListFragmentInteraction(item: RadioStation?) {
         openRadioPlayerFragment(item!!)
+    }
+
+    override fun onPlayPlayerFragmentInteraction(playerIntent: Intent) {
+        currentPlayerServiceIntent = playerIntent
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -93,7 +100,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun openRadioPlayerFragment(radioStation: RadioStation) {
         val fragmentTransaction = supportFragmentManager.beginTransaction().addToBackStack(null)
-        val radioPlayerFragment = RadioPlayer.newInstance(radioStation)
+        val radioPlayerFragment = RadioPlayer.newInstance(radioStation, currentPlayerServiceIntent)
         fragmentTransaction.replace(R.id.main_content, radioPlayerFragment)
         fragmentTransaction.commit()
     }
