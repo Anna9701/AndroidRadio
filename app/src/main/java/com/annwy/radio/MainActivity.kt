@@ -111,4 +111,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         fragmentTransaction.replace(R.id.main_content, radioStationsFragment)
         fragmentTransaction.commit()
     }
+
+    companion object {
+        const val PAUSE_RADIO_ACTION = "com.newzealandradio.annwy.action.PAUSE_RADIO"
+        const val PLAY_RADIO_ACTION = "com.newzealandradio.annwy.action.PLAY_RADIO"
+        const val RADIO_STATION_KEY = "com.newzealandradio.annwy.RADIO_STATION"
+    }
 }

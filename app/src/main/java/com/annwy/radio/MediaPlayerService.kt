@@ -1,9 +1,6 @@
 package com.annwy.radio
 
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.Service
+import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.media.AudioManager
@@ -16,13 +13,14 @@ import android.os.PowerManager
 import android.support.v4.app.NotificationCompat
 import android.util.Log
 import com.annwy.radio.models.RadioStation
-import org.jetbrains.anko.activityManager
+import android.support.v4.media.app.NotificationCompat as MediaNotificationCompat
 import java.io.IOException
 
 class MediaPlayerService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener {
     override fun onError(p0: MediaPlayer?, p1: Int, p2: Int): Boolean {
         Log.e("MediaPlayerServiceError", "Something went wrong. Resetting...")
-        mMediaPlayer.reset()
+        initMediaPlayer(radioStation!!.radioUrl)
+        wifiLock.acquire()
         return true
     }
 
@@ -30,8 +28,8 @@ class MediaPlayerService : Service(), MediaPlayer.OnPreparedListener, MediaPlaye
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = getString(R.string.app_name)
-            val descriptionText = getString(R.string.app_name)
+            val name = applicationContext.resources.getString(R.string.app_name)
+            val descriptionText = applicationContext.resources.getString(R.string.app_name)
             val importance = NotificationManager.IMPORTANCE_DEFAULT
             val channel = NotificationChannel(CHANNEL_ID.toString(), name, importance).apply {
                 description = descriptionText
@@ -101,11 +99,24 @@ class MediaPlayerService : Service(), MediaPlayer.OnPreparedListener, MediaPlaye
     }
 
     private fun createNotification(): Notification {
+        createNotificationChannel()
+        val pauseIntent = createMediaPlayerServiceIntent(ACTION_PAUSE)
+        val playIntent = createMediaPlayerServiceIntent(ACTION_PLAY)
         val mBuilder = NotificationCompat.Builder(this, CHANNEL_ID.toString())
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setSmallIcon(R.drawable.ic_radio_black_24dp)
             .setContentTitle(resources.getString(R.string.app_name))
             .setContentText("Now playing: ${radioStation?.radioName}")
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+        .addAction(android.R.drawable.ic_media_play, "Play", playIntent)
+        .addAction(android.R.drawable.ic_media_pause, "Pause", pauseIntent)
+            .setStyle(MediaNotificationCompat.MediaStyle()
+                .setCancelButtonIntent(pauseIntent)
+                .setShowCancelButton(true)
+                .setShowActionsInCompactView(1))
 
+
+//TODO play pause intents
         return mBuilder.build()
     }
 
@@ -124,6 +135,13 @@ class MediaPlayerService : Service(), MediaPlayer.OnPreparedListener, MediaPlaye
         mMediaPlayer.release()
     }
 
+    private fun createMediaPlayerServiceIntent(action: String) : PendingIntent {
+        val playerServiceIntent = Intent(this, MediaPlayerService::class.java)
+        playerServiceIntent.putExtra(MediaPlayerService.RADIO_STATION_KEY, radioStation)
+        playerServiceIntent.action = action
+        return PendingIntent.getActivity(this, 0, playerServiceIntent, 0)
+    }
+
     companion object {
         const val ACTION_PLAY: String = "com.example.action.PLAY"
         const val ACTION_PAUSE: String = "com.example.action.PAUSE"
@@ -134,6 +152,5 @@ class MediaPlayerService : Service(), MediaPlayer.OnPreparedListener, MediaPlaye
     }
 
     init {
-        createNotificationChannel()
     }
 }
