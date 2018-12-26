@@ -9,10 +9,9 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.annwy.radio.models.RadioStation
 
 import com.annwy.radio.radioStations.RadioStationsContent
-import com.annwy.radio.radioStations.RadioStationsContent.RadioStation
-
 
 class RadioStationFragment : Fragment() {
     private var listener: OnListFragmentInteractionListener? = null

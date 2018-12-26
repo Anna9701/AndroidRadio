@@ -12,6 +12,7 @@ import android.view.MenuItem
 import android.view.View
 import com.annwy.radio.R
 import com.annwy.radio.R.id.action_settings
+import com.annwy.radio.models.RadioStation
 import com.annwy.radio.radioStations.RadioStationsContent
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
@@ -20,8 +21,8 @@ import kotlinx.android.synthetic.main.app_bar_main.*
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, RadioStationFragment.OnListFragmentInteractionListener {
     private lateinit var currentCity: String
 
-    override fun onListFragmentInteraction(item: RadioStationsContent.RadioStation?) {
-        openRadioPlayerFragment(item!!.radioUrl, item.radioName)
+    override fun onListFragmentInteraction(item: RadioStation?) {
+        openRadioPlayerFragment(item!!)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -90,12 +91,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return true
     }
 
-    private fun openRadioPlayerFragment(radioUrl: String, radioLabel: String) {
+    private fun openRadioPlayerFragment(radioStation: RadioStation) {
         val fragmentTransaction = supportFragmentManager.beginTransaction().addToBackStack(null)
-        val bundle = Bundle()
-        bundle.putString(RadioPlayer.RADIO_STATION_URL, radioUrl)
-        bundle.putString(RadioPlayer.RADIO_STATION_LABEL, radioLabel)
-        val radioPlayerFragment = RadioPlayer.newInstance(bundle)
+        val radioPlayerFragment = RadioPlayer.newInstance(radioStation)
         fragmentTransaction.replace(R.id.main_content, radioPlayerFragment)
         fragmentTransaction.commit()
     }

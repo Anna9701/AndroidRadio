@@ -2,6 +2,7 @@ package com.annwy.radio.radioStations
 
 import android.content.res.Resources
 import android.content.res.XmlResourceParser
+import com.annwy.radio.models.RadioStation
 import com.annwy.radio.R
 import org.xmlpull.v1.XmlPullParserException
 import java.io.IOException
@@ -50,6 +51,7 @@ class RadioStationsContent(private val resources: Resources?, private val region
         var name = String()
         var url = String()
         var region = String()
+        var logoUrl = String()
         while (parser.next() != XmlResourceParser.END_TAG) {
             if (parser.eventType != XmlResourceParser.START_TAG) {
                 continue
@@ -58,10 +60,11 @@ class RadioStationsContent(private val resources: Resources?, private val region
                 "name" -> name = readTag(parser, "name")
                 "region" -> region = readTag(parser, "region")
                 "url" -> url = readTag(parser, "url")
+                "logoUrl" -> logoUrl = readTag(parser, "logoUrl")
                 else -> skip(parser)
             }
         }
-        return RadioStation(name, url, region)
+        return RadioStation(name, url, region, logoUrl)
     }
 
     @Throws(IOException::class, XmlPullParserException::class)
@@ -95,9 +98,5 @@ class RadioStationsContent(private val resources: Resources?, private val region
                 XmlResourceParser.START_TAG -> ++depth
             }
         }
-    }
-
-    data class RadioStation(val radioName: String, val radioUrl: String, val regionName: String) {
-        override fun toString(): String = "$radioName - $regionName"
     }
 }

@@ -2,7 +2,6 @@ package com.annwy.radio
 
 import android.app.AlarmManager
 import android.app.PendingIntent
-import android.app.VoiceInteractor
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -19,20 +18,19 @@ import java.util.*
 import android.graphics.drawable.Drawable
 import android.support.design.widget.Snackbar
 import android.widget.ImageButton
+import com.annwy.radio.models.RadioStation
 
 class RadioPlayer : Fragment() {
     private var listener: OnFragmentInteractionListener? = null
     private lateinit var alarmManager: AlarmManager
-    private lateinit var radioUrl: String
-    private lateinit var radioLabel: String
+    private lateinit var radioStation: RadioStation
     private var scheduledStopServiceIntent: PendingIntent? = null
     private var isPlaying = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            radioUrl = it.getString(RADIO_STATION_URL)
-            radioLabel = it.getString(RADIO_STATION_LABEL)
+            radioStation = it.getParcelable(RADIO_STATION)
         }
         alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
     }
@@ -46,7 +44,7 @@ class RadioPlayer : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setEventListeners()
         disableButtonsOnInitialization()
-        radio_label.text = radioLabel
+        radio_label.text = radioStation.radioName
     }
 
     private fun disableButtonsOnInitialization() {
@@ -89,7 +87,7 @@ class RadioPlayer : Fragment() {
     private fun playMedia() {
         if (isPlaying) pauseMedia()
         val playerServiceIntent = Intent(activity, MediaPlayerService::class.java)
-        playerServiceIntent.putExtra("radioUrl", radioUrl)
+        playerServiceIntent.putExtra(MediaPlayerService.RADIO_STATION_KEY, radioStation)
         playerServiceIntent.action = MediaPlayerService.ACTION_PLAY
         activity?.startService(playerServiceIntent)
         isPlaying = true
@@ -178,12 +176,11 @@ class RadioPlayer : Fragment() {
     }
 
     companion object {
-        const val RADIO_STATION_URL = "com.radio.annwy.radio.station_url"
-        const val RADIO_STATION_LABEL = "com.radio.annwy.radio.station_label"
+        const val RADIO_STATION = "com.radio.annwy.radio.station"
 
         @JvmStatic
-        fun newInstance(bundle: Bundle) = RadioPlayer().apply {
-            arguments = Bundle().apply { putAll(bundle) }
+        fun newInstance(radioStation: RadioStation) = RadioPlayer().apply {
+            arguments = Bundle().apply { putParcelable(RADIO_STATION, radioStation) }
         }
 
         fun String.toEditable(): Editable = Editable.Factory.getInstance().newEditable(this)

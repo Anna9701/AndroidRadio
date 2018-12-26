@@ -8,10 +8,10 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.annwy.radio.RadioStationFragment.OnListFragmentInteractionListener
-import com.annwy.radio.radioStations.RadioStationsContent.RadioStation
 import kotlinx.android.synthetic.main.fragment_radiostation.view.*
 import android.graphics.Bitmap
 import android.util.Log
+import com.annwy.radio.models.RadioStation
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import java.io.IOException
@@ -20,10 +20,9 @@ import java.net.URL
 import javax.net.ssl.HttpsURLConnection
 
 
-class MyRadioStationRecyclerViewAdapter(
-    private val mValues: List<RadioStation>,
-    private val mListener: OnListFragmentInteractionListener?
-) : RecyclerView.Adapter<MyRadioStationRecyclerViewAdapter.ViewHolder>() {
+class MyRadioStationRecyclerViewAdapter(private val mValues: List<RadioStation>,
+                                        private val mListener: OnListFragmentInteractionListener?)
+    : RecyclerView.Adapter<MyRadioStationRecyclerViewAdapter.ViewHolder>() {
     private val mOnClickListener: View.OnClickListener
 
     init {
@@ -42,9 +41,7 @@ class MyRadioStationRecyclerViewAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = mValues[position]
         doAsync {
-            var bitmap = loadImage("https://cdn.mediaworks.nz/thebreeze_timaru/Content/shows/images/1545272409483_brz_logo_1100x620.png",
-                BitmapFactory.Options()
-            )
+            val bitmap = loadImage(item.logoUrl, BitmapFactory.Options())
             uiThread {
                 holder.mImageView.setImageBitmap(bitmap)
             }

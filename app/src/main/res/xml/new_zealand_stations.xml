@@ -3,54 +3,66 @@
     <radioStation>
         <name>The Breeze</name>
         <region>Auckland</region>
+        <logoUrl>https://cdn.mediaworks.nz/thebreeze_auckland/Content/shows/images/1545261892108_rova-breeze_carousel_240x240-nochannel.png?width=[width]&amp;height=[height]&amp;crop=auto</logoUrl>
         <url>https://livestream.mediaworks.nz/radio_origin/breeze_128kbps/chunklist.m3u8</url>
     </radioStation>
     <radioStation>
         <name>Sound FM</name>
         <region>Auckland</region>
+        <logoUrl>https://cdn.mediaworks.nz/thesound/Content/apps/theme/images/thesound_round_logo.png?width=[width]&amp;height=[height]&amp;crop=auto</logoUrl>
         <url>https://livestream.mediaworks.nz/radio_origin/sound_128kbps/chunklist.m3u8</url>
     </radioStation>
     <radioStation>
         <name>The Rock FM</name>
         <region>Auckland</region>
+        <logoUrl>https://cdn.mediaworks.nz/therock_auckland/Content/shows/images/1532635097770_rok-the-rock_rova_240x240.png?width=[width]&amp;height=[height]&amp;crop=auto</logoUrl>
         <url>https://livestream.mediaworks.nz/radio_origin/rock_128kbps/chunklist.m3u8</url>
     </radioStation>
     <radioStation>
         <name>95bFM</name>
+        <logoUrl></logoUrl>
         <url>http://streams.95bfm.com/stream256</url>
     </radioStation>
     <radioStation>
         <name>The Edge</name>
+        <region>Auckland</region>
+        <logoUrl>https://cdn.mediaworks.nz/theedge_auckland/Content/shows/images/1527581472773_rova-show-logo240x240.png?width=[width]&amp;height=[height]&amp;crop=auto</logoUrl>
         <url>http://livestream.mediaworks.nz/radio_origin/edge_128kbps/chunklist.m3u8</url>
     </radioStation>
     <radioStation>
         <name>MoreFM</name>
         <region>Auckland</region>
+        <logoUrl>https://cdn.mediaworks.nz/morefm_auckland/Content/shows/images/1545280461243_rova-morefm_rovashowlogo_240x240.png?width=[width]&amp;height=[height]&amp;crop=auto</logoUrl>
         <url>https://livestream.mediaworks.nz/radio_origin/more_128kbps/playlist.m3u8</url>
     </radioStation>
     <radioStation>
         <name>Mai FM</name>
         <region>Auckland</region>
+        <logoUrl>https://cdn.mediaworks.nz/maifm/Content/apps/theme/images/maifm_round_logo.png?width=[width]&amp;height=[height]&amp;crop=auto</logoUrl>
         <url>https://livestream.mediaworks.nz/radio_origin/maifm_128kbps/chunklist.m3u8</url>
     </radioStation>
     <radioStation>
         <name>George FM</name>
         <region>Auckland</region>
+        <logoUrl>https://cdn.mediaworks.nz/george/Content/apps/theme/images/georgefm_round_logo.png?width=[width]&amp;height=[height]&amp;crop=auto</logoUrl>
         <url>https://livestream.mediaworks.nz/radio_origin/george_128kbps/playlist.m3u8</url>
     </radioStation>
     <radioStation>
         <name>Magic Music</name>
         <region>Auckland</region>
+        <logoUrl></logoUrl>
         <url>https://livestream.mediaworks.nz/radio_origin/magic_128kbps/playlist.m3u8</url>
     </radioStation>
     <radioStation>
         <name>Radio Live</name>
         <region>Auckland</region>
+        <logoUrl>https://cdn.mediaworks.nz/radiolive/Content/apps/theme/images/radiolive_round_logo.png?width=[width]&amp;height=[height]&amp;crop=auto</logoUrl>
         <url>https://livestream.mediaworks.nz/radio_origin/radiolive_128kbps/playlist.m3u8</url>
     </radioStation>
     <radioStation>
         <name>The Breeze</name>
         <region>Queenstown</region>
+        <logoUrl>https://cdn.mediaworks.nz/thebreeze_queenstown/Content/shows/images/1545274334697_rova-breeze_carousel_240x240-nochannel.png?width=[width]&amp;height=[height]&amp;crop=auto</logoUrl>
         <url>https://livestream.mediaworks.nz/radio_origin/breeze_[QTN]_128kbps/chunklist.m3u8</url>
     </radioStation>
 </stations>
