@@ -1,6 +1,5 @@
 package com.annwy.radio
 
-import android.app.PendingIntent
 import android.content.Intent
 import android.os.Bundle
 import android.preference.PreferenceManager
@@ -10,11 +9,7 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
-import com.annwy.radio.R
-import com.annwy.radio.R.id.action_settings
 import com.annwy.radio.models.RadioStation
-import com.annwy.radio.radioStations.RadioStationsContent
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 
@@ -110,11 +105,5 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val radioStationsFragment = RadioStationFragment.newInstance(currentCity)
         fragmentTransaction.replace(R.id.main_content, radioStationsFragment)
         fragmentTransaction.commit()
-    }
-
-    companion object {
-        const val PAUSE_RADIO_ACTION = "com.newzealandradio.annwy.action.PAUSE_RADIO"
-        const val PLAY_RADIO_ACTION = "com.newzealandradio.annwy.action.PLAY_RADIO"
-        const val RADIO_STATION_KEY = "com.newzealandradio.annwy.RADIO_STATION"
     }
 }

@@ -5,18 +5,32 @@ import android.content.Context
 import android.content.Intent
 import android.media.AudioManager
 import android.media.MediaPlayer
+import android.media.TimedMetaData
 import android.net.wifi.WifiManager
-import android.os.Binder
-import android.os.Build
-import android.os.IBinder
-import android.os.PowerManager
+import android.os.*
 import android.support.v4.app.NotificationCompat
 import android.util.Log
 import com.annwy.radio.models.RadioStation
 import android.support.v4.media.app.NotificationCompat as MediaNotificationCompat
 import java.io.IOException
 
-class MediaPlayerService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener {
+class MediaPlayerService : Service(), MediaPlayer.OnPreparedListener,
+    MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener,
+    MediaPlayer.OnSeekCompleteListener, MediaPlayer.OnTimedMetaDataAvailableListener {
+    override fun onSeekComplete(p0: MediaPlayer?) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun onTimedMetaDataAvailable(p0: MediaPlayer?, p1: TimedMetaData?) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun onCompletion(p0: MediaPlayer?) {
+        Log.e("MediaPlayerServiceError", "Something went wrong. Resetting...")
+        initMediaPlayer(radioStation!!.radioUrl)
+        wifiLock.acquire()
+    }
+
     override fun onError(p0: MediaPlayer?, p1: Int, p2: Int): Boolean {
         Log.e("MediaPlayerServiceError", "Something went wrong. Resetting...")
         initMediaPlayer(radioStation!!.radioUrl)
@@ -30,7 +44,7 @@ class MediaPlayerService : Service(), MediaPlayer.OnPreparedListener, MediaPlaye
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = applicationContext.resources.getString(R.string.app_name)
             val descriptionText = applicationContext.resources.getString(R.string.app_name)
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val importance = NotificationManager.IMPORTANCE_LOW
             val channel = NotificationChannel(CHANNEL_ID.toString(), name, importance).apply {
                 description = descriptionText
             }
@@ -73,17 +87,28 @@ class MediaPlayerService : Service(), MediaPlayer.OnPreparedListener, MediaPlaye
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         val action: String = intent.action
+        if (intent.hasExtra(RADIO_STATION_KEY)) {
+            radioStation = intent.extras.getParcelable(RADIO_STATION_KEY)
+        }
         when (action) {
             ACTION_PLAY -> {
-                radioStation = intent.extras.getParcelable(RADIO_STATION_KEY)
-                startPlayer()
+                if (!mMediaPlayer.isPlaying) {
+                    startPlayer()
+                }
             }
-            ACTION_PAUSE -> pauseRadio()
-            ACTION_STOP -> stopRadio()
+            ACTION_PAUSE -> {
+                if (mMediaPlayer.isPlaying) {
+                    pauseRadio()
+                }
+            }
+            ACTION_STOP -> {
+                if (mMediaPlayer.isPlaying) {
+                    stopRadio()
+                }
+            }
+            ACTION_CLOSE -> stopSelf()
         }
         return Service.START_REDELIVER_INTENT
-
-
     }
 
     /** Called when MediaPlayer is ready */
@@ -100,23 +125,27 @@ class MediaPlayerService : Service(), MediaPlayer.OnPreparedListener, MediaPlaye
 
     private fun createNotification(): Notification {
         createNotificationChannel()
-        val pauseIntent = createMediaPlayerServiceIntent(ACTION_PAUSE)
-        val playIntent = createMediaPlayerServiceIntent(ACTION_PLAY)
+        val pauseIntent = createPlayerIntent(ACTION_STOP)
+        val playIntent = createPlayerIntent(ACTION_PLAY)
+        val closeIntent = createPlayerIntent(ACTION_CLOSE)
+
         val mBuilder = NotificationCompat.Builder(this, CHANNEL_ID.toString())
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setSmallIcon(R.drawable.ic_radio_black_24dp)
             .setContentTitle(resources.getString(R.string.app_name))
             .setContentText("Now playing: ${radioStation?.radioName}")
+            .setSound(null)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-        .addAction(android.R.drawable.ic_media_play, "Play", playIntent)
-        .addAction(android.R.drawable.ic_media_pause, "Pause", pauseIntent)
-            .setStyle(MediaNotificationCompat.MediaStyle()
-                .setCancelButtonIntent(pauseIntent)
-                .setShowCancelButton(true)
-                .setShowActionsInCompactView(1))
+            .addAction(android.R.drawable.ic_media_play, "Play", playIntent)
+            .addAction(android.R.drawable.ic_media_pause, "Pause", pauseIntent)
+            .addAction(android.R.drawable.ic_notification_clear_all, "Close", closeIntent)
+            .setStyle(
+                MediaNotificationCompat.MediaStyle()
+                    .setShowCancelButton(true)
+                    .setCancelButtonIntent(closeIntent)
+                    .setShowActionsInCompactView(1)
+            )
 
-
-//TODO play pause intents
         return mBuilder.build()
     }
 
@@ -135,22 +164,20 @@ class MediaPlayerService : Service(), MediaPlayer.OnPreparedListener, MediaPlaye
         mMediaPlayer.release()
     }
 
-    private fun createMediaPlayerServiceIntent(action: String) : PendingIntent {
+    private fun createPlayerIntent(action: String): PendingIntent {
         val playerServiceIntent = Intent(this, MediaPlayerService::class.java)
-        playerServiceIntent.putExtra(MediaPlayerService.RADIO_STATION_KEY, radioStation)
         playerServiceIntent.action = action
-        return PendingIntent.getActivity(this, 0, playerServiceIntent, 0)
+        return PendingIntent.getService(this, SERVICE_FLAG, playerServiceIntent, 0)
     }
 
     companion object {
         const val ACTION_PLAY: String = "com.example.action.PLAY"
         const val ACTION_PAUSE: String = "com.example.action.PAUSE"
         const val ACTION_STOP: String = "com.example.action.STOP"
+        const val ACTION_CLOSE: String = "com.example.action.CLOSE"
 
         const val RADIO_STATION_KEY: String = "com.example.keys.RADIO_STATION"
         private const val CHANNEL_ID = 997
-    }
-
-    init {
+        private const val SERVICE_FLAG = 976
     }
 }

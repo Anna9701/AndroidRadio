@@ -1,5 +1,6 @@
 package com.annwy.radio
 
+import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
@@ -16,11 +17,12 @@ import com.annwy.radio.Utils.TimePickerFragment
 import kotlinx.android.synthetic.main.fragment_radio_player.*
 import java.util.*
 import android.graphics.drawable.Drawable
+import android.os.Parcel
 import android.support.design.widget.Snackbar
 import android.widget.ImageButton
 import com.annwy.radio.models.RadioStation
 
-class RadioPlayer : Fragment() {
+class RadioPlayer() : Fragment() {
     private var listener: OnFragmentInteractionListener? = null
     private lateinit var alarmManager: AlarmManager
     private lateinit var radioStation: RadioStation
@@ -74,7 +76,12 @@ class RadioPlayer : Fragment() {
         val hour = time[0].toInt()
         val minutes = time[1].toInt()
         scheduleStopService(context!!, hour, minutes)
-        displayMessageInSnackBar(String.format(resources.getText(R.string.timer_scheduled_prompt).toString(), stop_time.text))
+        displayMessageInSnackBar(
+            String.format(
+                resources.getText(R.string.timer_scheduled_prompt).toString(),
+                stop_time.text
+            )
+        )
         setImageButtonEnabled(context!!, true, cancel_sleep_button, android.R.drawable.ic_menu_close_clear_cancel)
     }
 
@@ -85,7 +92,12 @@ class RadioPlayer : Fragment() {
     private fun invertEnabled() {
         setImageButtonEnabled(context!!, !play_button.isEnabled, play_button, android.R.drawable.ic_media_play)
         setImageButtonEnabled(context!!, !pause_button.isEnabled, pause_button, android.R.drawable.ic_media_pause)
-        setImageButtonEnabled(context!!, !sleep_button.isEnabled, sleep_button, android.R.drawable.ic_menu_recent_history)
+        setImageButtonEnabled(
+            context!!,
+            !sleep_button.isEnabled,
+            sleep_button,
+            android.R.drawable.ic_menu_recent_history
+        )
         stop_time.isEnabled = !stop_time.isEnabled
     }
 
@@ -165,8 +177,10 @@ class RadioPlayer : Fragment() {
         fun onPlayPlayerFragmentInteraction(playerIntent: Intent)
     }
 
-    private fun setImageButtonEnabled(context: Context, enabled: Boolean,
-                                      item: ImageButton, iconResId: Int) {
+    private fun setImageButtonEnabled(
+        context: Context, enabled: Boolean,
+        item: ImageButton, iconResId: Int
+    ) {
         item.isEnabled = enabled
         item.isClickable = enabled
         val originalIcon = context.resources.getDrawable(iconResId)
