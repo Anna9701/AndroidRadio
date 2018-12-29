@@ -1,6 +1,5 @@
 package com.annwy.radio
 
-import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
@@ -17,15 +16,14 @@ import com.annwy.radio.Utils.TimePickerFragment
 import kotlinx.android.synthetic.main.fragment_radio_player.*
 import java.util.*
 import android.graphics.drawable.Drawable
-import android.os.Parcel
 import android.support.design.widget.Snackbar
 import android.widget.ImageButton
-import com.annwy.radio.models.RadioStation
+import com.annwy.radio.models.IRadioStation
 
-class RadioPlayer() : Fragment() {
+class RadioPlayer : Fragment() {
     private var listener: OnFragmentInteractionListener? = null
     private lateinit var alarmManager: AlarmManager
-    private lateinit var radioStation: RadioStation
+    private lateinit var radioStation: IRadioStation
     private var scheduledStopServiceIntent: PendingIntent? = null
     private var isPlaying = false
     private var currentPlayerServiceIntent: Intent? = null
@@ -55,7 +53,7 @@ class RadioPlayer() : Fragment() {
         setImageButtonEnabled(context!!, false, pause_button, android.R.drawable.ic_media_pause)
         setImageButtonEnabled(context!!, false, sleep_button, android.R.drawable.ic_menu_recent_history)
         setImageButtonEnabled(context!!, false, cancel_sleep_button, android.R.drawable.ic_menu_close_clear_cancel)
-        if (currentPlayerServiceIntent?.extras?.getParcelable<RadioStation>(MediaPlayerService.RADIO_STATION_KEY) == radioStation) {
+        if (currentPlayerServiceIntent?.extras?.getParcelable<IRadioStation>(MediaPlayerService.RADIO_STATION_KEY) == radioStation) {
             invertEnabled()
         }
     }
@@ -202,7 +200,7 @@ class RadioPlayer() : Fragment() {
         const val PLAYER_SERVICE_INTENT = "com.radio.annwy.radio.player_service_intent"
 
         @JvmStatic
-        fun newInstance(radioStation: RadioStation, playerIntent: Intent?) = RadioPlayer().apply {
+        fun newInstance(radioStation: IRadioStation, playerIntent: Intent?) = RadioPlayer().apply {
             arguments = Bundle().apply {
                 putParcelable(RADIO_STATION, radioStation)
                 putParcelable(PLAYER_SERVICE_INTENT, playerIntent)

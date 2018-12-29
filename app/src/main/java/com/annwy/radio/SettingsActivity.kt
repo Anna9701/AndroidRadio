@@ -70,7 +70,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             // updated to reflect the new value, per the Android Design
             // guidelines.
             bindPreferenceSummaryToValue(findPreference("country_preference"))
-            bindPreferenceSummaryToValue(findPreference("city_preference"))
+            bindPreferenceSummaryToValue(findPreference("region_preference"))
         }
 
         override fun onOptionsItemSelected(item: MenuItem): Boolean {

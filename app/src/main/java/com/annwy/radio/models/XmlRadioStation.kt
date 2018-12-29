@@ -3,7 +3,7 @@ package com.annwy.radio.models
 import android.os.Parcel
 import android.os.Parcelable
 
-data class RadioStation(val radioName: String, val radioUrl: String, val regionName: String, val logoUrl: String) : Parcelable {
+data class XmlRadioStation(override val radioName: String, override val radioUrl: String, override val regionName: String, override val logoUrl: String) : IRadioStation {
     constructor(parcel: Parcel) : this(
         parcel.readString(),
         parcel.readString(),
@@ -23,12 +23,12 @@ data class RadioStation(val radioName: String, val radioUrl: String, val regionN
         return 0
     }
 
-    companion object CREATOR : Parcelable.Creator<RadioStation> {
-        override fun createFromParcel(parcel: Parcel): RadioStation {
-            return RadioStation(parcel)
+    companion object CREATOR : Parcelable.Creator<XmlRadioStation> {
+        override fun createFromParcel(parcel: Parcel): XmlRadioStation {
+            return XmlRadioStation(parcel)
         }
 
-        override fun newArray(size: Int): Array<RadioStation?> {
+        override fun newArray(size: Int): Array<XmlRadioStation?> {
             return arrayOfNulls(size)
         }
     }

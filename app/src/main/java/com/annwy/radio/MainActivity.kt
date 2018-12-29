@@ -9,7 +9,8 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-import com.annwy.radio.models.RadioStation
+import com.annwy.radio.models.IRadioStation
+import com.annwy.radio.radioStations.MediaWorksRadioStationsDownloader
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 
@@ -19,7 +20,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var currentCity: String
     private var currentPlayerServiceIntent: Intent? = null
 
-    override fun onListFragmentInteraction(item: RadioStation?) {
+    override fun onListFragmentInteraction(item: IRadioStation?) {
         openRadioPlayerFragment(item!!)
     }
 
@@ -28,6 +29,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        MediaWorksRadioStationsDownloader()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
@@ -44,12 +46,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun setTitleToCurrentCity() {
-        if (!PreferenceManager.getDefaultSharedPreferences(applicationContext).contains("city_preference")) {
+        if (!PreferenceManager.getDefaultSharedPreferences(applicationContext).contains("region_preference")) {
             PreferenceManager.setDefaultValues(applicationContext, R.xml.pref_general, false)
         }
         currentCity = PreferenceManager
             .getDefaultSharedPreferences(applicationContext)
-            .getString("city_preference", String())
+            .getString("region_preference", String())
         title = currentCity
     }
 
@@ -93,7 +95,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return true
     }
 
-    private fun openRadioPlayerFragment(radioStation: RadioStation) {
+    private fun openRadioPlayerFragment(radioStation: IRadioStation) {
         val fragmentTransaction = supportFragmentManager.beginTransaction().addToBackStack(null)
         val radioPlayerFragment = RadioPlayer.newInstance(radioStation, currentPlayerServiceIntent)
         fragmentTransaction.replace(R.id.main_content, radioPlayerFragment)

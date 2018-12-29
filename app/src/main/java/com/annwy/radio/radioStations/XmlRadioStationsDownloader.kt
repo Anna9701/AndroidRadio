@@ -2,14 +2,14 @@ package com.annwy.radio.radioStations
 
 import android.content.res.Resources
 import android.content.res.XmlResourceParser
-import com.annwy.radio.models.RadioStation
+import com.annwy.radio.models.XmlRadioStation
 import com.annwy.radio.R
 import org.xmlpull.v1.XmlPullParserException
 import java.io.IOException
 import java.util.ArrayList
 
-class RadioStationsContent(private val resources: Resources?, private val regionName: String) {
-    val items: MutableList<RadioStation> = ArrayList()
+class XmlRadioStationsDownloader(private val resources: Resources?, private val regionName: String) {
+    val items: MutableList<XmlRadioStation> = ArrayList()
     private val namespace: String? = null
 
     init {
@@ -27,8 +27,8 @@ class RadioStationsContent(private val resources: Resources?, private val region
     }
 
     @Throws(XmlPullParserException::class, IOException::class)
-    private fun readStations(parser: XmlResourceParser): List<RadioStation> {
-        val entries = mutableListOf<RadioStation>()
+    private fun readStations(parser: XmlResourceParser): List<XmlRadioStation> {
+        val entries = mutableListOf<XmlRadioStation>()
         parser.next(); parser.next()
         parser.require(XmlResourceParser.START_TAG, namespace, "stations")
         while (parser.next() != XmlResourceParser.END_TAG) {
@@ -46,7 +46,7 @@ class RadioStationsContent(private val resources: Resources?, private val region
     }
 
     @Throws(XmlPullParserException::class, IOException::class)
-    private fun readRadioStation(parser: XmlResourceParser): RadioStation {
+    private fun readRadioStation(parser: XmlResourceParser): XmlRadioStation {
         parser.require(XmlResourceParser.START_TAG, namespace, "radioStation")
         var name = String()
         var url = String()
@@ -64,7 +64,7 @@ class RadioStationsContent(private val resources: Resources?, private val region
                 else -> skip(parser)
             }
         }
-        return RadioStation(name, url, region, logoUrl)
+        return XmlRadioStation(name, url, region, logoUrl)
     }
 
     @Throws(IOException::class, XmlPullParserException::class)

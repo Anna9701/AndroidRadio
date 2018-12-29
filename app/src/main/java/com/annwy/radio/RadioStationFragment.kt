@@ -9,9 +9,10 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.annwy.radio.models.RadioStation
+import com.annwy.radio.models.IRadioStation
+import com.annwy.radio.radioStations.MediaWorksRadioStationsDownloader
 
-import com.annwy.radio.radioStations.RadioStationsContent
+import com.annwy.radio.radioStations.XmlRadioStationsDownloader
 
 class RadioStationFragment : Fragment() {
     private var listener: OnListFragmentInteractionListener? = null
@@ -37,7 +38,11 @@ class RadioStationFragment : Fragment() {
                     columnCount <= 1 -> LinearLayoutManager(context)
                     else -> GridLayoutManager(context, columnCount)
                 }
-                adapter = MyRadioStationRecyclerViewAdapter(RadioStationsContent(activity?.resources, regionName).items, listener)
+                val mediaWorksRadioStations = MediaWorksRadioStationsDownloader(regionName).radioStations
+                val radioStations = ArrayList<IRadioStation>()
+                radioStations.addAll(XmlRadioStationsDownloader(activity?.resources, regionName).items)
+                radioStations.addAll(mediaWorksRadioStations)
+                adapter = MyRadioStationRecyclerViewAdapter(radioStations, listener)
             }
         }
         return view
@@ -56,7 +61,7 @@ class RadioStationFragment : Fragment() {
     }
 
     interface OnListFragmentInteractionListener {
-        fun onListFragmentInteraction(item: RadioStation?)
+        fun onListFragmentInteraction(item: IRadioStation?)
     }
 
     companion object {

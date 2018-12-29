@@ -65,4 +65,10 @@
         <logoUrl>https://cdn.mediaworks.nz/thebreeze_queenstown/Content/shows/images/1545274334697_rova-breeze_carousel_240x240-nochannel.png?width=[width]&amp;height=[height]&amp;crop=auto</logoUrl>
         <url>https://livestream.mediaworks.nz/radio_origin/breeze_[QTN]_128kbps/chunklist.m3u8</url>
     </radioStation>
+    <radioStation>
+        <name>Radio New Zealand</name>
+        <region></region>
+        <logoUrl></logoUrl>
+        <url>https://https://5420613.fls.doubleclick.net/activityi</url>
+    </radioStation>
 </stations>

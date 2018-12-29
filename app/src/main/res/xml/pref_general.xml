@@ -6,8 +6,8 @@
             android:key="country_preference"/>
     <ListPreference
             android:defaultValue="Auckland"
-            android:title="City" android:entries="@array/cities" android:entryValues="@array/cities"
-            android:key="city_preference"/>
+            android:title="Region" android:entries="@array/regions" android:entryValues="@array/regions"
+            android:key="region_preference"/>
     <SwitchPreference
             android:key="example_switch"
             android:title="@string/pref_title_social_recommendations"

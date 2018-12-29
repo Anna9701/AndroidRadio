@@ -10,7 +10,7 @@ import android.net.wifi.WifiManager
 import android.os.*
 import android.support.v4.app.NotificationCompat
 import android.util.Log
-import com.annwy.radio.models.RadioStation
+import com.annwy.radio.models.IRadioStation
 import android.support.v4.media.app.NotificationCompat as MediaNotificationCompat
 import java.io.IOException
 
@@ -58,7 +58,7 @@ class MediaPlayerService : Service(), MediaPlayer.OnPreparedListener,
     private val iBinder = Binder()
     private var mMediaPlayer = MediaPlayer()
     private lateinit var wifiLock: WifiManager.WifiLock
-    private var radioStation: RadioStation? = null
+    private var radioStation: IRadioStation? = null
 
     override fun onBind(p0: Intent?): IBinder {
         return iBinder

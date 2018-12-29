@@ -3,8 +3,30 @@
     <string-array name="countries">
         <item>New Zealand</item>
     </string-array>
-    <string-array name="cities">
+    <string-array name="regions">
             <item>Auckland</item>
             <item>Queenstown</item>
+            <item>Wellington</item>
+            <item>Wanganui</item>
+            <item>Whanganui</item>
+            <item>Wairarapa</item>
+            <item>Waikato</item>
+            <item>Timaru</item>
+            <item>Tauranga</item>
+            <item>Taupo</item>
+            <item>Taranaki</item>
+            <item>Rotorua</item>
+            <item>North-Otago</item>
+            <item>Nelson</item>
+            <item>Marlborough</item>
+            <item>Manawatu</item>
+            <item>Kapiti</item>
+            <item>Invercargill</item>
+            <item>HawkesBay</item>
+            <item>Dunedin</item>
+            <item>MercuryBay</item>
+            <item>Christchurch</item>
+            <item>CentralOtago</item>
+            <item>Ashburton</item>
     </string-array>
 </resources>

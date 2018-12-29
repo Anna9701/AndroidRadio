@@ -11,7 +11,7 @@ import com.annwy.radio.RadioStationFragment.OnListFragmentInteractionListener
 import kotlinx.android.synthetic.main.fragment_radiostation.view.*
 import android.graphics.Bitmap
 import android.util.Log
-import com.annwy.radio.models.RadioStation
+import com.annwy.radio.models.IRadioStation
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import java.io.IOException
@@ -20,14 +20,14 @@ import java.net.URL
 import javax.net.ssl.HttpsURLConnection
 
 
-class MyRadioStationRecyclerViewAdapter(private val mValues: List<RadioStation>,
+class MyRadioStationRecyclerViewAdapter(private val mValues: List<IRadioStation>,
                                         private val mListener: OnListFragmentInteractionListener?)
     : RecyclerView.Adapter<MyRadioStationRecyclerViewAdapter.ViewHolder>() {
     private val mOnClickListener: View.OnClickListener
 
     init {
         mOnClickListener = View.OnClickListener { v ->
-            val item = v.tag as RadioStation
+            val item = v.tag as IRadioStation
             mListener?.onListFragmentInteraction(item)
         }
     }
