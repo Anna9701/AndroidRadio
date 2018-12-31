@@ -4,13 +4,14 @@ import android.content.res.Resources
 import android.content.res.XmlResourceParser
 import com.annwy.radio.models.XmlRadioStation
 import com.annwy.radio.R
+import com.annwy.radio.models.IRadioStation
+import com.annwy.radio.utils.XmlParser
 import org.xmlpull.v1.XmlPullParserException
 import java.io.IOException
 import java.util.ArrayList
 
-class XmlRadioStationsDownloader(private val resources: Resources?, private val regionName: String) {
-    val items: MutableList<XmlRadioStation> = ArrayList()
-    private val namespace: String? = null
+class XmlRadioStationsDownloader(resources: Resources?, private val regionName: String) : XmlParser(resources) {
+    val items: MutableList<IRadioStation> = ArrayList()
 
     init {
         loadFromResources()
@@ -27,7 +28,7 @@ class XmlRadioStationsDownloader(private val resources: Resources?, private val 
     }
 
     @Throws(XmlPullParserException::class, IOException::class)
-    private fun readStations(parser: XmlResourceParser): List<XmlRadioStation> {
+    private fun readStations(parser: XmlResourceParser): List<IRadioStation> {
         val entries = mutableListOf<XmlRadioStation>()
         parser.next(); parser.next()
         parser.require(XmlResourceParser.START_TAG, namespace, "stations")
@@ -67,36 +68,4 @@ class XmlRadioStationsDownloader(private val resources: Resources?, private val 
         return XmlRadioStation(name, url, region, logoUrl)
     }
 
-    @Throws(IOException::class, XmlPullParserException::class)
-    private fun readTag(parser: XmlResourceParser, tag: String): String {
-        parser.require(XmlResourceParser.START_TAG, namespace, tag)
-        val summary = readText(parser)
-        parser.require(XmlResourceParser.END_TAG, namespace, tag)
-        return summary
-    }
-
-    // For the tags title and summary, extracts their text values.
-    @Throws(IOException::class, XmlPullParserException::class)
-    private fun readText(parser: XmlResourceParser): String {
-        var result = ""
-        if (parser.next() == XmlResourceParser.TEXT) {
-            result = parser.text
-            parser.nextTag()
-        }
-        return result
-    }
-
-    @Throws(XmlPullParserException::class, IOException::class)
-    private fun skip(parser: XmlResourceParser) {
-        if (parser.eventType != XmlResourceParser.START_TAG) {
-            throw IllegalStateException()
-        }
-        var depth = 1
-        while (depth != 0) {
-            when (parser.next()) {
-                XmlResourceParser.END_TAG -> --depth
-                XmlResourceParser.START_TAG -> ++depth
-            }
-        }
-    }
 }

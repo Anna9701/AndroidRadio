@@ -1,4 +1,4 @@
-package com.annwy.radio.Utils
+package com.annwy.radio.utils
 
 import android.app.Dialog
 import android.app.DialogFragment

@@ -12,7 +12,7 @@ import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.annwy.radio.Utils.TimePickerFragment
+import com.annwy.radio.utils.TimePickerFragment
 import kotlinx.android.synthetic.main.fragment_radio_player.*
 import java.util.*
 import android.graphics.drawable.Drawable

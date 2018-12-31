@@ -44,7 +44,7 @@ class RadioStationFragment : Fragment() {
                     else -> GridLayoutManager(context, columnCount)
                 }
                 doAsync {
-                    val mediaWorksRadioStations = MediaWorksRadioStationsDownloader(regionName).radioStations
+                    val mediaWorksRadioStations = MediaWorksRadioStationsDownloader(resources, regionName).radioStations
                     val radioStations = ArrayList<IRadioStation>()
                     radioStations.addAll(XmlRadioStationsDownloader(activity?.resources, regionName).items)
                     radioStations.addAll(mediaWorksRadioStations)

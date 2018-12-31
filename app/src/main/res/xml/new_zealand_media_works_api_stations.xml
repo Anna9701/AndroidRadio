@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<media_work_net_apis>
+    <api>https://radio-api.mediaworks.nz/radio-api/v3/station/thebreeze/web</api>
+    <api>https://radio-api.mediaworks.nz/radio-api/v3/station/thesound/web</api>
+    <api>https://radio-api.mediaworks.nz/radio-api/v3/station/therock/web</api>
+    <api>https://radio-api.mediaworks.nz/radio-api/v3/station/theedge/web</api>
+    <api>https://radio-api.mediaworks.nz/radio-api/v3/station/morefm/web</api>
+    <api>https://radio-api.mediaworks.nz/radio-api/v3/station/maifm/web</api>
+    <api>https://radio-api.mediaworks.nz/radio-api/v3/station/georgefm/web</api>
+    <api>https://radio-api.mediaworks.nz/radio-api/v3/station/magic/web</api>
+    <api>https://radio-api.mediaworks.nz/radio-api/v3/station/radiolive/web</api>
+</media_work_net_apis>

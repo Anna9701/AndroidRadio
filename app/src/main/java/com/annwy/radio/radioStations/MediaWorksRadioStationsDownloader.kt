@@ -1,17 +1,43 @@
 package com.annwy.radio.radioStations
 
+import android.content.res.Resources
+import android.content.res.XmlResourceParser
+import com.annwy.radio.R
 import com.annwy.radio.models.mediaWorksApi.RadioStation
+import com.annwy.radio.utils.XmlParser
 import com.google.gson.Gson
 import khttp.get
 
-class MediaWorksRadioStationsDownloader(private val regionName: String? = null) {
+class MediaWorksRadioStationsDownloader(resources: Resources?, private val regionName: String? = null) :
+    XmlParser(resources) {
     var radioStations = ArrayList<RadioStation>()
     private val headers = mapOf("content-type" to "application/json")
     private val jsonConverter = Gson()
 
     init {
-        val breezeStations = getRadioStations("https://radio-api.mediaworks.nz/radio-api/v3/station/thebreeze/web")
-        radioStations.addAll(breezeStations)
+        val apisUrls = getRadioApiUrlFromResources(resources!!.getXml(R.xml.new_zealand_media_works_api_stations))
+        for (apiUrl in apisUrls) {
+            val stations = getRadioStations(apiUrl)
+            radioStations.addAll(stations)
+        }
+    }
+
+    private fun getRadioApiUrlFromResources(parser: XmlResourceParser): List<String> {
+        val entries = mutableListOf<String>()
+        parser.next(); parser.next()
+        parser.require(XmlResourceParser.START_TAG, namespace, "media_work_net_apis")
+        while (parser.next() != XmlResourceParser.END_TAG) {
+            if (parser.eventType != XmlResourceParser.START_TAG) {
+                continue
+            }
+            // Starts by looking for the entry tag
+            if (parser.name == "api") {
+                entries.add(readTag(parser, "api"))
+            } else {
+                skip(parser)
+            }
+        }
+        return entries
     }
 
     private fun getRadioStation(url: String): RadioStation? {
