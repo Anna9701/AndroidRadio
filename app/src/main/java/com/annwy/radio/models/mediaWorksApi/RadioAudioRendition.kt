@@ -2,9 +2,11 @@ package com.annwy.radio.models.mediaWorksApi
 
 import android.os.Parcel
 import android.os.Parcelable
+import com.google.gson.annotations.SerializedName
 
 data class RadioAudioRendition(
-    val brightcoveId: String? = null,
+    @SerializedName("brightcoveId")
+    val id: String? = null,
     val url: String? = null,
     val quality: String? = null
 ) : Parcelable {
@@ -14,7 +16,7 @@ data class RadioAudioRendition(
         parcel.readString()
     )
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(brightcoveId)
+        parcel.writeString(id)
         parcel.writeString(url)
         parcel.writeString(quality)
     }

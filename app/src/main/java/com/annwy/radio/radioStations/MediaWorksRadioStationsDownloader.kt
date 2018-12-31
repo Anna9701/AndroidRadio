@@ -1,19 +1,17 @@
 package com.annwy.radio.radioStations
 
 import com.annwy.radio.models.mediaWorksApi.RadioStation
-import com.beust.klaxon.Klaxon
+import com.google.gson.Gson
 import khttp.get
-import org.jetbrains.anko.doAsync
 
 class MediaWorksRadioStationsDownloader(private val regionName: String? = null) {
     var radioStations = ArrayList<RadioStation>()
     private val headers = mapOf("content-type" to "application/json")
+    private val jsonConverter = Gson()
 
     init {
-        doAsync {
-            val breezeStations = getRadioStations("https://radio-api.mediaworks.nz/radio-api/v3/station/thebreeze/web")
-            radioStations.addAll(breezeStations)
-        }
+        val breezeStations = getRadioStations("https://radio-api.mediaworks.nz/radio-api/v3/station/thebreeze/web")
+        radioStations.addAll(breezeStations)
     }
 
     private fun getRadioStation(url: String): RadioStation? {
@@ -21,7 +19,7 @@ class MediaWorksRadioStationsDownloader(private val regionName: String? = null) 
             url = url,
             headers = headers
         )
-        return Klaxon().parse<RadioStation>(apiResponse.text)
+        return jsonConverter.fromJson(apiResponse.text, RadioStation::class.java)
     }
 
     private fun getRadioStations(url: String): ArrayList<RadioStation> {
@@ -30,10 +28,16 @@ class MediaWorksRadioStationsDownloader(private val regionName: String? = null) 
         if (radioStation.regionList == null) {
             radioStations.add(radioStation)
         } else if (radioStation.regionList.isNotEmpty()) {
-            for (station in radioStation.regionList) {
-                if (regionName == null || regionName.equals(station.regionName, ignoreCase = true)) {
-                    radioStations.addAll(getRadioStations(station.radioUrl))
+            if (regionName != null) {
+                radioStation.regionList.removeAll { station ->
+                    !regionName.equals(
+                        station.regionName,
+                        ignoreCase = true
+                    )
                 }
+            }
+            for (station in radioStation.regionList) {
+                radioStations.addAll(getRadioStations(station.radioUrl))
             }
         }
         return radioStations

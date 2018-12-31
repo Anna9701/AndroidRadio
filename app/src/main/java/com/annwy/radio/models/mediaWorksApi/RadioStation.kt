@@ -3,17 +3,17 @@ package com.annwy.radio.models.mediaWorksApi
 import android.os.Parcel
 import android.os.Parcelable
 import com.annwy.radio.models.IRadioStation
-import com.beust.klaxon.Json
+import com.google.gson.annotations.SerializedName
 
 data class RadioStation(
-    @Json(name = "name")
+    @SerializedName("name")
     override val radioName: String,
     val shows: ArrayList<RadioShow>,
     val nowPlaying: ArrayList<RadioMediaTrack>,
     val previouslyPlayed: ArrayList<RadioMediaTrack>,
     val contactInformation: RadioContactInformation,
     val audioRenditions: ArrayList<RadioAudioRendition>,
-    @Json(name = "region")
+    @SerializedName("region")
     override val regionName: String,
     val regionList: ArrayList<RadioRegion>? = null
 ) : IRadioStation {

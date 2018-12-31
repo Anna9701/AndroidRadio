@@ -2,29 +2,29 @@ package com.annwy.radio.models.mediaWorksApi
 
 import android.os.Parcel
 import android.os.Parcelable
-import com.beust.klaxon.Json
+import com.google.gson.annotations.SerializedName
 
 data class RadioRegion(
-    @Json(name = "regionId")
+    @SerializedName("regionId")
     val regionName: String,
     val displayName: String,
-    @Json(name = "relative_url")
-    val relativeUrl: String,
-    @Json(ignored = true)
-    val radioUrl: String = "$RADIO_API_MEDIA_WORKS_URL$relativeUrl"
+    @SerializedName("relative_url")
+    val relativeUrl: String
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
-        parcel.readString(),
         parcel.readString(),
         parcel.readString(),
         parcel.readString()
     )
 
+    val radioUrl: String
+        get() = "$RADIO_API_MEDIA_WORKS_URL$relativeUrl"
+
+
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(regionName)
         parcel.writeString(displayName)
         parcel.writeString(relativeUrl)
-        parcel.writeString(radioUrl)
     }
 
     override fun describeContents(): Int {
