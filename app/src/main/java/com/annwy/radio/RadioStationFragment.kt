@@ -13,9 +13,9 @@ import com.annwy.radio.models.IRadioStation
 import com.annwy.radio.radioStations.MediaWorksRadioStationsDownloader
 
 import com.annwy.radio.radioStations.XmlRadioStationsDownloader
-import org.jetbrains.anko.custom.async
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
+import java.util.concurrent.Future
 
 class RadioStationFragment : Fragment() {
     private var listener: OnListFragmentInteractionListener? = null
@@ -30,10 +30,8 @@ class RadioStationFragment : Fragment() {
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_radiostation_list, container, false)
 
         // Set the adapter
@@ -43,19 +41,33 @@ class RadioStationFragment : Fragment() {
                     columnCount <= 1 -> LinearLayoutManager(context)
                     else -> GridLayoutManager(context, columnCount)
                 }
-                doAsync {
-                    val mediaWorksRadioStations = MediaWorksRadioStationsDownloader(resources, regionName).radioStations
-                    val radioStations = ArrayList<IRadioStation>()
-                    radioStations.addAll(XmlRadioStationsDownloader(activity?.resources, regionName).items)
-                    radioStations.addAll(mediaWorksRadioStations)
-                    uiThread {
-                        adapter = MyRadioStationRecyclerViewAdapter(radioStations, listener)
-
-                    }
-                }
+                val radioStations = ArrayList<IRadioStation>()
+                adapter = MyRadioStationRecyclerViewAdapter(radioStations, listener)
+                getXmlRadioStations(radioStations)
+                getMediaWorkNetApiRadioStations(radioStations)
             }
         }
         return view
+    }
+
+    private fun RecyclerView.getXmlRadioStations(radioStations: ArrayList<IRadioStation>) {
+        doAsync {
+            radioStations.addAll(XmlRadioStationsDownloader(activity?.resources, regionName).items)
+            uiThread {
+                adapter.notifyDataSetChanged()
+            }
+        }
+    }
+
+    private fun RecyclerView.getMediaWorkNetApiRadioStations(radioStations: ArrayList<IRadioStation>): Future<Unit> {
+        return doAsync {
+            val mediaWorksRadioStations = MediaWorksRadioStationsDownloader(resources, regionName).radioStations
+            radioStations.addAll(mediaWorksRadioStations)
+            uiThread {
+                adapter.notifyDataSetChanged()
+            }
+
+        }
     }
 
     override fun onAttach(context: Context) {

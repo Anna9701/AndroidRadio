@@ -20,7 +20,7 @@ import java.net.URL
 import javax.net.ssl.HttpsURLConnection
 
 
-class MyRadioStationRecyclerViewAdapter(private val mValues: List<IRadioStation>,
+class MyRadioStationRecyclerViewAdapter(val mValues: List<IRadioStation>,
                                         private val mListener: OnListFragmentInteractionListener?)
     : RecyclerView.Adapter<MyRadioStationRecyclerViewAdapter.ViewHolder>() {
     private val mOnClickListener: View.OnClickListener
@@ -68,7 +68,6 @@ class MyRadioStationRecyclerViewAdapter(private val mValues: List<IRadioStation>
 
         return bitmap
     }
-
 
     @Throws(IOException::class)
     private fun openHttpsConnection(strURL: String): InputStream? {
